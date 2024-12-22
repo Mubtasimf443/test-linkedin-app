@@ -1,0 +1,4 @@
+/video/*
+/.env
+/node_modules
+/public/birds.mp4

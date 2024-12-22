@@ -1,0 +1,39 @@
+{
+    "paging": {
+        "start": 0,
+        "count": 10,
+        "links": []
+    },
+    "elements": [
+        {
+            "roleAssignee": "urn:li:person:G6eI5KsU8C",
+            "state": "APPROVED",
+            "lastModified": {
+                "actor": "urn:li:person:G6eI5KsU8C",
+                "impersonator": "urn:li:servicePrincipal:organization",
+                "time": 1730083757982
+            },
+            "role": "ADMINISTRATOR",
+            "created": {
+                "actor": "urn:li:person:G6eI5KsU8C",
+                "impersonator": "urn:li:servicePrincipal:organization",
+                "time": 1730083757982
+            },
+            "organization": "urn:li:organization:104976884"
+        },
+        {
+            "roleAssignee": "urn:li:person:G6eI5KsU8C",
+            "state": "REQUESTED",
+            "lastModified": {
+                "actor": "urn:li:person:G6eI5KsU8C",
+                "time": 1456153712757
+            },
+            "role": "ADMINISTRATOR",
+            "created": {
+                "actor": "urn:li:person:G6eI5KsU8C",
+                "time": 1456153712757
+            },
+            "organization": "urn:li:organization:5885357"
+        }
+    ]
+}

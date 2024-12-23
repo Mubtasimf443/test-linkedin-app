@@ -381,8 +381,37 @@ app.get('/page/images', async function (req,res) {
     } catch (error) {
         catchError(res,error)
     }
-})
-app.get('/page/text',async function (req,res) {
-    
+});
+app.get('/page/text', async function (req, res) {
+    let
+        organization = 'urn:li:organization:104976884',
+        accessToken = require('./li.json').access_token,
+        title = 'what a beatiful bird and nature';
+    let response = await request.post(
+        'https://api.linkedin.com/v2/ugcPosts',
+        {
+            author: organization, // Your organization URN
+            lifecycleState: 'PUBLISHED',
+            specificContent: {
+                "com.linkedin.ugc.ShareContent": {
+                    shareCommentary: {
+                        text: title
+                    },
+                    "shareMediaCategory": "NONE"
+                }
+            },
+            visibility: {
+                "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+            }
+        },
+        {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+        }
+    );
+
+    res.json(response);
 })
 app.listen(3000, serverData => log('Thanks to Allah ,by his marcy server is started '))

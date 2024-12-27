@@ -22,21 +22,36 @@ app.get('/', (req, res) => res.redirect('/Auth.html'));
 
 
 let LinkedinBot = new Linkedin({
-    client_key: NEW_LINKEDIN_KEY,
-    client_secret: NEW_LINKEDIN_SECRET,
+    client_key: LINKEDIN_KEY,
+    client_secret: LINKEDIN_SECRET,
     redirect_uri: "http://localhost:3000/callback",
     scopes: [
         `profile`,
         `email`,
         `w_member_social`,
         'openid',
+        'r_organization_social',
+        'rw_organization_admin',
+        'w_member_social',
+        "w_organization_social",
+        'r_basicprofile',
+        'r_organization_admin',
     ],
     access_token: require('./li.json').access_token,
     user_id: require('./li.json').id,
 })
 
+app.get('/page-ids',async function(req,res) {
+    let data= await LinkedinBot.getPageIds(require('./li.json').access_token);
+    if (data) return res.json(data);
+    return res.sendStatus(304);
+})
+
 
 app.get('/get-code', (req, res) => LinkedinBot.getAuthUrl(req, res));
+
+
+
 
 app.get('/callback', async function (req, res) {
     try {
@@ -84,15 +99,10 @@ app.get('/upload-a-video', async function (req, res) {
 
 app.get('/get-user-info', async function (req, res) {
     try {
-        let access_token = "AQVTh2g_cvuN-plZ4u7-SsKs575wo4W_K9rgLo1crza12PvMro8zDMjBCsX8Q-5Nw8bs5JRiwJeS3h0RvCwktINKOnj2UJr4XGYp3dTHKlupvLr8-r8fnKqnBXVhuNnvganiEMdVO-L7E4ffvheu2kskJH05U1wQcrnaX-PqHoAK7EV8zgwOsManoGxwzrEVwJVs1ytfb9Zgu0SqRJE1AqKNcnPZidoChdXVLLK2V7ct5Etq2qIHJ-rjqFhyHec0qSAj_hQlhjpwD-vWSJAZrWQtz2UPCFR08bDHnPYMT3jDtaIAp0k1w00hVnyxkUiVzPoSjssTuh4W5NK35-i7LV4Lr2tLcg";
-        let response = await LinkedinBot.getUserIdentityInfo();
+        
+        let response = await LinkedinBot.getUserIdentityInfo(require('./li.json').access_token);
         console.log(response);
 
-        let data = breakJsonData({
-            access_token,
-            ...response
-        });
-        writeFileSync(resolve(__dirname, './li.json'), breakJsonData(data));
         return res.send('data seved')
     } catch (error) {
         console.error(error);
@@ -413,5 +423,16 @@ app.get('/page/text', async function (req, res) {
     );
 
     res.json(response);
+})
+
+
+app.get('/refresh-access-token', async function (req, res) {
+    try {
+        let data = await LinkedinBot.exchangeAccessToken(require('./li.json').refresh_token);
+        res.json(data)
+    } catch (error) {
+        console.error(error);
+    }
+    
 })
 app.listen(3000, serverData => log('Thanks to Allah ,by his marcy server is started '))

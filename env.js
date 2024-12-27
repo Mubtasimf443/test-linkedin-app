@@ -12,9 +12,9 @@ import { createRequire } from 'module';
 
 export const __dirname=path.dirname(fileURLToPath(import.meta.url));
 export const require=createRequire(import.meta.url);
-export const LINKEDIN_KEY=process.env.LINKEDIN_KEY
 export const NEW_LINKEDIN_KEY=process.env.NEW_LINKEDIN_KEY
 export const NEW_LINKEDIN_SECRET=process.env.NEW_LINKEDIN_SECRET
+export const LINKEDIN_KEY=process.env.LINKEDIN_KEY
 export const LINKEDIN_SECRET=process.env.LINKEDIN_SECRET
 export const LINKEDIN_REDIRECT_URI=process.env.LINKEDIN_REDIRECT_URI
 export const LINKEDIN_PERSON_URN=process.env.LINKEDIN_PERSON_URN

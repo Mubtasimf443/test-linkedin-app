@@ -62,6 +62,35 @@ export default class Linkedin {
             urn:`urn:li:person:${response.vanityName}`
         };
     }
+
+    async getPageIds(access_token) {
+        let params=(new URLSearchParams({q: 'roleAssignee'})).toString();
+        let response=await fetch('https://api.linkedin.com/v2/organizationalEntityAcls?'+params , {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+                "X-Restli-Protocol-Version": "2.0.0"
+            },
+        });
+        let data=await response.json().catch(e => ({error :'can not parse json data'}));
+        if (Array.isArray(data.elements) ) {
+            if (data.elements.length>=1) {
+                let org=[];
+                for (let i = 0; i < data.elements.length; i++) {
+                    let {state,role,organizationalTarget}=data.elements[i];
+                    if (state === 'APPROVED') { 
+                        if (role === 'ADMINISTRATOR') { 
+                            if (organizationalTarget) {
+                                org.push(organizationalTarget)
+                            }
+                        }
+                    }
+                }
+                if (org.length >=1) return org;
+                if (org.length ===0) return undefined;
+            } else return undefined;
+        } 
+        throw data
+    } 
     getAccessToken=async function getAccessToken(req,res) {
         try {
             if (!req.query.code) {
@@ -84,9 +113,11 @@ export default class Linkedin {
             if (response.access_token) {
                 let 
                 access_token =response.access_token,
+                refresh_token=response.refresh_token,
                 userData =await getUserURN(response.access_token);
                 return {
                     access_token ,
+                    ...response,
                     ...userData
                 }
             }
@@ -350,7 +381,25 @@ export default class Linkedin {
             throw error;
         }
     }
-
+    async exchangeAccessToken(refresh_token) {
+        let client_id = this.client_key, client_secret = this.client_secret, grant_type = 'refresh_token';
+        let body = (new URLSearchParams({ client_id, client_secret, grant_type, refresh_token })).toString()
+        let response = await fetch('https://www.linkedin.com/oauth/v2/accessToken', {
+            method: 'POST',
+            body: body,
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        });
+        response = await response.json().catch(e => {return ({ error: "can't parse json" })});
+        if (response.access_token && response.refresh_token) {
+            return ({
+                access_token: response.access_token,
+                refresh_token: response.refresh_token
+            });
+        }
+        throw response;
+    }
 
     //page video
     page={
